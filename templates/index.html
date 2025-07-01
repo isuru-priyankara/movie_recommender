@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 2rem;
+        }
+        .hero {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .movie-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero text-center">
+            <h1 class="display-4">Movie Recommendation System</h1>
+            <p class="lead">Discover movies similar to your favorites</p>
+        </div>
+
+        <div class="search-box">
+            <form method="POST" action="/">
+                <div class="mb-3">
+                    <label for="movieInput" class="form-label">Enter a movie title:</label>
+                    <div class="autocomplete" style="position: relative;">
+                        <input type="text" class="form-control form-control-lg" 
+                               id="movieInput" name="movie" 
+                               placeholder="e.g. The Dark Knight" 
+                               autocomplete="off" required>
+                    </div>
+                    <div id="movieList" class="movie-list mt-2 d-none">
+                        <div class="list-group">
+                            {% for movie in movies %}
+                            <a href="#" class="list-group-item list-group-item-action movie-option">{{ movie }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Get Recommendations</button>
+            </form>
+
+            {% if error %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-5 text-center text-muted">
+            <p>Data provided by TMDB API</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Autocomplete functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const movieInput = document.getElementById('movieInput');
+            const movieList = document.getElementById('movieList');
+            
+            // Show/hide movie list on focus/blur
+            movieInput.addEventListener('focus', function() {
+                movieList.classList.remove('d-none');
+            });
+            
+            movieInput.addEventListener('blur', function() {
+                // Small delay to allow click event to register
+                setTimeout(() => {
+                    movieList.classList.add('d-none');
+                }, 200);
+            });
+            
+            // Filter movies as user types
+            movieInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const options = document.querySelectorAll('.movie-option');
+                
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Click handler for movie options
+            document.querySelectorAll('.movie-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    movieInput.value = this.textContent;
+                    movieList.classList.add('d-none');
+                });
+            });
+            
+            // Keyboard navigation
+            movieInput.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const options = document.querySelectorAll('.movie-option:not([style*="display: none"])');
+                    if (options.length === 0) return;
+                    
+                    let currentFocus = -1;
+                    options.forEach((option, index) => {
+                        if (option === document.activeElement) {
+                            currentFocus = index;
+                        }
+                    });
+                    
+                    if (e.key === 'ArrowDown') {
+                        currentFocus = (currentFocus + 1) % options.length;
+                    } else {
+                        currentFocus = (currentFocus - 1 + options.length) % options.length;
+                    }
+                    
+                    options[currentFocus].focus();
+                } else if (e.key === 'Enter' && document.activeElement.classList.contains('movie-option')) {
+                    e.preventDefault();
+                    movieInput.value = document.activeElement.textContent;
+                    movieList.classList.add('d-none');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

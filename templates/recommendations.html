@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Movies - Movie Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 2rem;
+        }
+        .hero {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .movie-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .movie-poster {
+            height: 400px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .placeholder-poster {
+            height: 400px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .back-btn {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-outline-primary back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Search
+        </a>
+
+        <div class="hero text-center">
+            <h1 class="display-4">Movies Similar To</h1>
+            <h2 class="display-5 fw-bold">{{ movie }}</h2>
+        </div>
+
+        {% if recommendations %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            {% for rec in recommendations %}
+            <div class="col">
+                <div class="card movie-card h-100">
+                    {% if rec.poster %}
+                    <img src="{{ rec.poster }}" class="card-img-top movie-poster" alt="{{ rec.title }} poster">
+                    {% else %}
+                    <div class="placeholder-poster">
+                        <div class="text-center p-3">
+                            <i class="bi bi-film" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Poster not available</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ rec.title }}</h5>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="https://www.themoviedb.org/search?query={{ rec.title|urlencode }}" 
+                           class="btn btn-sm btn-outline-primary w-100" 
+                           target="_blank">
+                           View on TMDB
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> No recommendations found for this movie.
+        </div>
+        {% endif %}
+
+        <div class="mt-5 text-center text-muted">
+            <p>Data provided by TMDB API</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
