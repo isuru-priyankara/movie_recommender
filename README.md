@@ -2,7 +2,7 @@
 
 A simple and intelligent movie recommendation web application built with Flask. Just enter a movie title and get smart suggestions along with posters using The Movie Database (TMDB) API.
 
-![screenshot](static/screenshot.png) <!-- Optional: Replace with actual screenshot if available -->
+![screenshot](https://github.com/isuru-priyankara/movie_recommender/blob/fb03a7ab35ad08b1983e84ad707b3c558c128525/Screenshot%20(85).png) <!-- Optional: Replace with actual screenshot if available -->
 
 ---
 
