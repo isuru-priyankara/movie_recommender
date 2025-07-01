@@ -26,5 +26,4 @@ A simple and intelligent movie recommendation web application built with Flask. 
 
 ---
 
-## 📁 Project Structure
 
